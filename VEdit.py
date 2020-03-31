@@ -20,6 +20,7 @@ class Main:
         # create and add the File cascade to the menu bar
         fileMenu = tkinter.Menu(menubar, tearoff=0)
         fileMenu.add_command(label="Load", command=self.load)
+        fileMenu.add_command(label="Export", command=self.export)
         menubar.add_cascade(label="File", menu=fileMenu)
 
         if source:
@@ -33,6 +34,10 @@ class Main:
 
     def load(self):
         self.editor_setup(tkinter.filedialog.askopenfilename())
+
+    def export(self):
+        for i in range(0, len(self.markers), 2):
+            print(self.markers[i])
 
     def editor_setup(self, source):
         # load the video
@@ -88,7 +93,15 @@ class Main:
         x2 = mid + width / 2
         y2 = self.marker_canvas_height
 
-        self.marker_canvas.create_rectangle(x1, y1, x2, y2, fill='blue')
+        if x1 < 0:
+            x1 = 0
+            x2 = width
+
+        if x2 > self.video.width:
+            x2 = self.video.width
+            x1 = self.video.width - width
+
+        self.marker_canvas.create_rectangle(x1, y1, x2, y2, fill='green')
 
         self.markers.append(self.scale.get())
 
