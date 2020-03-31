@@ -2,8 +2,11 @@ import tkinter
 import tkinter.filedialog
 import PIL.Image
 import PIL.ImageTk
+import time
+import os
 
-from Video import Video
+import video
+import ffmpeg
 
 
 class Main:
@@ -36,12 +39,36 @@ class Main:
         self.editor_setup(tkinter.filedialog.askopenfilename())
 
     def export(self):
-        for i in range(0, len(self.markers), 2):
-            print(self.markers[i])
+        self.markers.sort()
+
+        list_file = open('list.txt', 'w+')
+
+        try:
+            source_name = self.source.split('/')[-1]
+
+            for i in range(0, len(self.markers), 2):
+                start_time = self.markers[i] * self.video.duration
+                end_time = self.markers[i + 1] * self.video.duration
+
+                start_time = time.strftime('%H:%M:%S', time.gmtime(start_time))
+                end_time = time.strftime('%H:%M:%S', time.gmtime(end_time))
+
+                output = 'temp-{}-{}'.format(i, source_name)
+
+                ffmpeg.crop(self.source, start_time, end_time, output)
+                list_file.write('file \'{}\'\n'.format(output))
+
+            ffmpeg.concat(list_file.name, 'trimmed-{}'.format(source_name))
+
+        except AttributeError:
+            list_file.close()
+            return
 
     def editor_setup(self, source):
+        self.source = source
+
         # load the video
-        self.video = Video(source)
+        self.video = video.Video(source)
 
         # destroy the placeholder text since we have the video
         if self.placeholder:

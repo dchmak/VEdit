@@ -13,6 +13,8 @@ class Video:
         self.height = self.video.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
         self.frame_count = self.video.get(cv2.CAP_PROP_FRAME_COUNT)
+        self.duration = self.frame_count / \
+            int(self.video.get(cv2.CAP_PROP_FPS))
 
     def __del__(self):
         if self.video.isOpened():
