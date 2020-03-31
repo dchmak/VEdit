@@ -1,10 +1,9 @@
 import tkinter
 import tkinter.filedialog
-import cv2
 import PIL.Image
 import PIL.ImageTk
 
-RESOLUTION = '1600x900'
+from Video import Video
 
 
 class Main:
@@ -24,7 +23,7 @@ class Main:
         menubar.add_cascade(label="File", menu=fileMenu)
 
         if source:
-            self.display_video(source)
+            self.editor_setup(source)
         else:
             self.placeholder = tkinter.Label(
                 self.window, text='Load a video to start.')
@@ -33,9 +32,9 @@ class Main:
         self.window.mainloop()
 
     def load(self):
-        self.display_video(tkinter.filedialog.askopenfilename())
+        self.editor_setup(tkinter.filedialog.askopenfilename())
 
-    def display_video(self, source):
+    def editor_setup(self, source):
         # load the video
         self.video = Video(source)
 
@@ -67,33 +66,5 @@ class Main:
         self.window.after(delay, self.update, delay)
 
 
-class Video:
-    def __init__(self, source):
-        # open the video source
-        self.video = cv2.VideoCapture(source)
-        if not self.video.isOpened():
-            raise ValueError("Unable to open video source", source)
-
-        # get video source width and height
-        self.width = self.video.get(cv2.CAP_PROP_FRAME_WIDTH)
-        self.height = self.video.get(cv2.CAP_PROP_FRAME_HEIGHT)
-
-        self.frame_count = self.video.get(cv2.CAP_PROP_FRAME_COUNT)
-
-    def __del__(self):
-        if self.video.isOpened():
-            self.video.release()
-
-    def get_frame(self, percent):
-        if self.video.isOpened():
-            self.video.set(cv2.cv2.CAP_PROP_POS_FRAMES,
-                           self.frame_count * percent)
-            ret, frame = self.video.read()
-            if ret:
-                return (ret, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-
-        return (ret, None)
-
-
 if __name__ == "__main__":
-    Main('VEdit', RESOLUTION)
+    Main('VEdit', '1600x900')
