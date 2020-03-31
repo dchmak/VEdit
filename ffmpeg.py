@@ -2,15 +2,15 @@ import os
 
 
 def crop(input, start, end, output):
-    command = 'ffmpeg -i {} -ss {} -to {} -c copy {}'.format(
+    command = 'ffmpeg -loglevel error -i {} -ss {} -to {} -c copy {}'.format(
         input, start, end, output)
 
-    os.system(command)
     print(command)
+    return os.system(command)
 
 
 def concat(input, output):
-    command = 'ffmpeg -f concat -i {} -c copy {}'.format(input, output)
+    command = 'ffmpeg -loglevel error -f concat -i {} -c copy {}'.format(input, output)
 
-    os.system(command)
     print(command)
+    return os.system(command)

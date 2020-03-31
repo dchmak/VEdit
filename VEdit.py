@@ -41,7 +41,8 @@ class Main:
     def export(self):
         self.markers.sort()
 
-        list_file = open('list.txt', 'w+')
+        list_filename = 'list.txt'
+        list_file = open(list_filename, 'w')
 
         try:
             source_name = self.source.split('/')[-1]
@@ -58,11 +59,18 @@ class Main:
                 ffmpeg.crop(self.source, start_time, end_time, output)
                 list_file.write('file \'{}\'\n'.format(output))
 
-            ffmpeg.concat(list_file.name, 'trimmed-{}'.format(source_name))
-
         except AttributeError:
             list_file.close()
             return
+
+        list_file.close()
+        ffmpeg.concat(list_file.name, 'trimmed-{}'.format(source_name))
+
+        list_file = open(list_filename, 'r')
+        for file in list_file:
+            os.remove(file.split('\'')[1::2][0])
+        list_file.close()
+        os.remove(list_filename)
 
     def editor_setup(self, source):
         self.source = source
