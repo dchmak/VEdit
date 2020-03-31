@@ -48,10 +48,14 @@ class Main:
             self.window, width=self.video.width, height=self.video.height)
         self.canvas.pack()
 
+        self.scale = tkinter.Scale(
+            self.window, from_=0, to=1, resolutio=-1, orient=tkinter.HORIZONTAL, length=self.video.width)
+        self.scale.pack()
+
         self.update(10)
 
     def update(self, delay):
-        retval, frame = self.video.get_frame()
+        retval, frame = self.video.get_frame(self.scale.get())
 
         if retval:
             self.photo = PIL.ImageTk.PhotoImage(
@@ -74,12 +78,16 @@ class Video:
         self.width = self.video.get(cv2.CAP_PROP_FRAME_WIDTH)
         self.height = self.video.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
+        self.frame_count = self.video.get(cv2.CAP_PROP_FRAME_COUNT)
+
     def __del__(self):
         if self.video.isOpened():
             self.video.release()
 
-    def get_frame(self):
+    def get_frame(self, percent):
         if self.video.isOpened():
+            self.video.set(cv2.cv2.CAP_PROP_POS_FRAMES,
+                           self.frame_count * percent)
             ret, frame = self.video.read()
             if ret:
                 return (ret, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
