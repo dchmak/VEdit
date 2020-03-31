@@ -42,14 +42,29 @@ class Main:
         if self.placeholder:
             self.placeholder.destroy()
 
-        # size and create a canvas to put the loaded video
-        self.canvas = tkinter.Canvas(
+        # create a canvas to put the loaded video
+        self.video_canvas = tkinter.Canvas(
             self.window, width=self.video.width, height=self.video.height)
-        self.canvas.pack()
+        self.video_canvas.pack()
 
+        # create a slider to control the preview of the video
         self.scale = tkinter.Scale(
-            self.window, from_=0, to=1, resolutio=-1, orient=tkinter.HORIZONTAL, length=self.video.width)
+            self.window, from_=0, to=1, resolutio=-1, orient=tkinter.HORIZONTAL, length=self.video.width, sliderlength=10)
         self.scale.pack()
+
+        # create a canvas to show when is marked
+        self.marker_canvas_height = 15
+        self.marker_canvas = tkinter.Canvas(
+            self.window, width=self.video.width, height=self.marker_canvas_height, background='black')
+        self.marker_canvas.pack()
+
+        # the actual storage of all markers
+        self.markers = []
+
+        # create a button to mark the current time
+        self.button = tkinter.Button(
+            self.window, text='Mark', command=self.mark)
+        self.button.pack()
 
         self.update(10)
 
@@ -60,11 +75,23 @@ class Main:
             self.photo = PIL.ImageTk.PhotoImage(
                 image=PIL.Image.fromarray(frame))
 
-            self.canvas.create_image(
+            self.video_canvas.create_image(
                 0, 0, image=self.photo, anchor=tkinter.NW)
 
         self.window.after(delay, self.update, delay)
 
+    def mark(self):
+        width = 5
+        mid = self.scale.get() * self.video.width
+        x1 = mid - width / 2
+        y1 = 0
+        x2 = mid + width / 2
+        y2 = self.marker_canvas_height
 
-if __name__ == "__main__":
+        self.marker_canvas.create_rectangle(x1, y1, x2, y2, fill='blue')
+
+        self.markers.append(self.scale.get())
+
+
+if __name__ == '__main__':
     Main('VEdit', '1600x900')
