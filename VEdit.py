@@ -36,7 +36,9 @@ class Main:
         self.window.mainloop()
 
     def load(self):
-        self.editor_setup(tkinter.filedialog.askopenfilename())
+        load_path = tkinter.filedialog.askopenfilename()
+        if load_path:
+            self.editor_setup(load_path)
 
     def export(self):
         self.markers.sort()
