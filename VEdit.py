@@ -22,9 +22,10 @@ class Main:
 
         # create and add the File cascade to the menu bar
         fileMenu = tkinter.Menu(menubar, tearoff=0)
-        fileMenu.add_command(label="Load", command=self.load)
-        fileMenu.add_command(label="Export", command=self.export)
-        menubar.add_cascade(label="File", menu=fileMenu)
+        fileMenu.add_command(label='Load', command=self.load)
+        fileMenu.add_command(label='Trim', command=self.trim)
+        fileMenu.add_command(label='Merge', command=self.merge)
+        menubar.add_cascade(label='File', menu=fileMenu)
 
         if source:
             self.editor_setup(source)
@@ -40,7 +41,7 @@ class Main:
         if load_path:
             self.editor_setup(load_path)
 
-    def export(self):
+    def trim(self):
         self.markers.sort()
 
         list_filename = 'list.txt'
@@ -73,6 +74,27 @@ class Main:
             os.remove(file.split('\'')[1::2][0])
         list_file.close()
         os.remove(list_filename)
+
+    def merge(self):
+        # list_filename = 'list.txt'
+        # list_file = open(list_filename, 'w')
+
+        # try:
+        files = tkinter.filedialog.askopenfilenames()
+
+        # except AttributeError:
+        #     list_file.close()
+        #     return
+
+        # list_file.close()
+        # ffmpeg.concat(list_file.name, 'output')
+
+        # list_file = open(list_filename, 'r')
+        # for file in list_file:
+        #     os.remove(file.split('\'')[1::2][0])
+        # list_file.close()
+        # os.remove(list_filename)
+
 
     def editor_setup(self, source):
         self.source = source
